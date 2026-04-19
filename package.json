@@ -15,9 +15,25 @@
     "start:http": "node dist/index.js --transport http --port 9990",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["mcp", "ardupilot", "mission-planner", "mavlink"],
+  "keywords": ["mcp", "ardupilot", "mission-planner", "mavlink", "model-context-protocol", "ai-agent"],
   "author": "Ahmet Karapinar",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmetkca/missionplanner-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ahmetkca/missionplanner-mcp-server/issues"
+  },
+  "homepage": "https://github.com/ahmetkca/missionplanner-mcp-server#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.3.6"
