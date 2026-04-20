@@ -220,8 +220,8 @@ There are no unit tests yet — contributions welcome. The easiest harness is a 
 The full design — including the HTTP contract, threading model, metadata sourcing, versioning handshake, and ADRs — lives in the Mission Planner fork:
 
 - **HTTP bridge contract:** [`MCP_BRIDGE_DESIGN.md`](https://github.com/ahmetkca/MissionPlanner/blob/feat/mcp-bridge/docs/MCP_BRIDGE_DESIGN.md)
-- **Project-wide architecture + vision:** `ARCHITECTURE.md` *(in progress)*
-- **ADRs:** `docs/adrs/` *(in progress)*
+- **Project-wide architecture + vision:** [`ARCHITECTURE.md`](https://github.com/ahmetkca/MissionPlanner/blob/feat/mcp-bridge/docs/ARCHITECTURE.md)
+- **ADRs:** [`docs/adrs/`](https://github.com/ahmetkca/MissionPlanner/tree/feat/mcp-bridge/docs/adrs)
 
 Please read the design doc before proposing changes that touch the HTTP contract or the MCP tool surface. Bumping `bridge_api_version` is not free — both sides have to agree.
 
