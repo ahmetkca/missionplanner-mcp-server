@@ -9,6 +9,7 @@ export interface StatusResponse {
   port: string | null;
   vehicle_type: string | null;
   vehicle_firmware: string | null;
+  armed: boolean | null;
   selected_sysid: number | null;
   selected_compid: number | null;
   params_loaded: number;
@@ -49,6 +50,14 @@ export interface ParamDetailResponse {
   calibration: string | null;
 }
 
+export interface SetParamResponse {
+  name: string;
+  requested_value: number;
+  applied_value: number;
+  changed: boolean;
+  reboot_required: boolean;
+}
+
 export interface BridgeError {
   error: string;
   message: string;
@@ -79,6 +88,17 @@ export class BridgeClient {
     return this.get<ParamDetailResponse>(
       `/params/${encodeURIComponent(name)}`,
     );
+  }
+
+  async setParam(
+    name: string,
+    value: number,
+    expectedCurrentValue: number,
+  ): Promise<SetParamResponse> {
+    return this.post<SetParamResponse>(`/params/${encodeURIComponent(name)}`, {
+      value,
+      expected_current_value: expectedCurrentValue,
+    });
   }
 
   async checkCompatibility(): Promise<{
@@ -133,6 +153,60 @@ export class BridgeClient {
           .catch(() => null)) as BridgeError | null;
         const msg = body?.message ?? `HTTP ${response.status}`;
         throw new Error(`Bridge error (${body?.error ?? "unknown"}): ${msg}`);
+      }
+
+      return (await response.json()) as T;
+    } catch (e) {
+      if (e instanceof TypeError && (e as NodeJS.ErrnoException).cause) {
+        throw new Error(
+          `Cannot reach MP bridge at ${this.baseUrl} — is Mission Planner running?`,
+        );
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private async post<T>(path: string, payload: unknown): Promise<T> {
+    const url = `${this.baseUrl}${path}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      REQUEST_TIMEOUT_MS,
+    );
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const parsed = (await response
+          .json()
+          .catch(() => null)) as (BridgeError & { current_value?: number }) | null;
+
+        if (response.status === 409) {
+          const cur = parsed?.current_value;
+          throw new Error(
+            `Bridge error (value_mismatch): expected_current_value did not match the live value` +
+              (cur !== undefined ? ` (current value is ${cur})` : "") +
+              `. Call get_param again to fetch the current value, then retry.`,
+          );
+        }
+
+        if (response.status === 504) {
+          throw new Error(
+            `Bridge error (timeout): Mission Planner did not receive an acknowledgement in time — ` +
+              `the write's outcome is ambiguous. Call get_param to check the live value before retrying.`,
+          );
+        }
+
+        const msg = parsed?.message ?? `HTTP ${response.status}`;
+        throw new Error(`Bridge error (${parsed?.error ?? "unknown"}): ${msg}`);
       }
 
       return (await response.json()) as T;

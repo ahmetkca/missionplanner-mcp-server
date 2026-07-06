@@ -4,6 +4,7 @@ import { registerMpStatus } from "./tools/mp-status.js";
 import { registerListParams } from "./tools/list-params.js";
 import { registerGetParam } from "./tools/get-param.js";
 import { registerSearchParams } from "./tools/search-params.js";
+import { registerSetParam } from "./tools/set-param.js";
 import { registerParamsCurrent } from "./resources/params-current.js";
 import { registerParamByName } from "./resources/param-by-name.js";
 
@@ -23,6 +24,7 @@ export function createServer(bridgeBaseUrl?: string): {
   registerListParams(server, bridge);
   registerGetParam(server, bridge);
   registerSearchParams(server, bridge);
+  registerSetParam(server, bridge);
 
   // Resources
   registerParamsCurrent(server, bridge);
