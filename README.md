@@ -6,6 +6,20 @@
 
 ---
 
+## Why this exists
+
+<p align="center">
+  <img src="assets/8F0B991F-26DD-4DC5-96D6-E2F5688CB2E4.jpg" alt="Twin-motor fixed-wing UAV on the Flightory Moose platform, undergoing ground testing" width="640">
+  <br>
+  <sub><em>The current setup.</em></sub>
+</p>
+
+Twin-motor fixed-wing UAV based on the Flightory Moose platform. I built and integrated the airframe, propulsion, flight controller, servos, GNSS, telemetry (with ELRS), RC, and FPV systems around ArduPilot/ArduPlane. The aircraft is currently undergoing configuration and ground testing in preparation for its first flight.
+
+This repository contains the MCP tooling I built to interact with Mission Planner and reason about flight-controller parameters using coding agents.
+
+---
+
 ## What it does
 
 When Mission Planner is connected to a vehicle (via COM/TCP/UDP), this server lets an AI agent:
